@@ -9,7 +9,7 @@ WORKDIR /app
 
 # 复制代码并构建
 COPY go.mod ./
-COPY go.sum ./
+# COPY go.sum ./
 RUN go mod download
 
 COPY . .
