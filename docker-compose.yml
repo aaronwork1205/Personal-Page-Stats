@@ -1,11 +1,10 @@
 version: "3.9"
 
 services:
-  goapp:
-    build:
-      context: .
+  personal-page-stats:
+    image: ghcr.io/aaronwork1205/personal-page-stats:latest
     ports:
-      - "8090:8090"  # 映射宿主机 8090 到容器内 8090
+      - "8090:8090"
     volumes:
-      - ./data:/app/data
+      - ./personal-page-stats:/app/data
     restart: unless-stopped
