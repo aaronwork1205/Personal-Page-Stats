@@ -42,6 +42,18 @@ func createTable() {
 }
 
 func logHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method == http.MethodOptions {
+		w.Header().Set("Access-Control-Allow-Origin", "https://aaronw.link")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Forwarded-For, User-Agent")
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+
+	w.Header().Set("Access-Control-Allow-Origin", "https://aaronw.link")
+
 	if r.Method != http.MethodPost {
 		http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
 		return
