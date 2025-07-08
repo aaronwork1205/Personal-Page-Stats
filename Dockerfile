@@ -1,5 +1,5 @@
 
-# ---- Stage 1: Build ----
+
 FROM golang:1.22-alpine AS builder
 
 # 安装 SQLite 依赖
@@ -9,8 +9,10 @@ WORKDIR /app
 
 # 复制代码并构建
 COPY go.mod ./
-# COPY go.sum ./
+COPY go.sum ./
 RUN go mod download
+
+RUN mkdir -p /app/data
 
 COPY . .
 
@@ -27,6 +29,6 @@ WORKDIR /app
 COPY --from=builder /app/server .
 COPY --from=builder /app/data ./data
 
-EXPOSE 8080
+EXPOSE 8090
 
 CMD ["./server"]

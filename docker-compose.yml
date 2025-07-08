@@ -1,0 +1,11 @@
+version: "3.9"
+
+services:
+  goapp:
+    build:
+      context: .
+    ports:
+      - "8090:8090"  # 映射宿主机 8090 到容器内 8090
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
