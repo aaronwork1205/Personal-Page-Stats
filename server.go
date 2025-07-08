@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"strings"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -42,24 +44,25 @@ func createTable() {
 }
 
 func logHandler(w http.ResponseWriter, r *http.Request) {
+	// CORS headers
+	w.Header().Set("Access-Control-Allow-Origin", "https://aaronw.link")
+	w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Forwarded-For, User-Agent")
 
+	// Handle preflight
 	if r.Method == http.MethodOptions {
-		w.Header().Set("Access-Control-Allow-Origin", "https://aaronw.link")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, X-Forwarded-For, User-Agent")
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-
-
-	w.Header().Set("Access-Control-Allow-Origin", "https://aaronw.link")
 
 	if r.Method != http.MethodPost {
 		http.Error(w, "Only POST allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	ip := r.RemoteAddr
+	// Try to get real IP from X-Forwarded-For header
+	ip := getClientIP(r)
+
 	userAgent := r.UserAgent()
 	timestamp := time.Now()
 
@@ -71,4 +74,20 @@ func logHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Logged"))
+}
+
+func getClientIP(r *http.Request) string {
+	// Try X-Forwarded-For first
+	if xff := r.Header.Get("X-Forwarded-For"); xff != "" {
+		// Multiple IPs are comma-separated, take the first
+		ips := strings.Split(xff, ",")
+		return strings.TrimSpace(ips[0])
+	}
+
+	// Fallback to RemoteAddr (format: IP:port)
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return r.RemoteAddr // fallback if something goes wrong
+	}
+	return ip
 }
