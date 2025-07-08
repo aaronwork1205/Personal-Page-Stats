@@ -22,17 +22,17 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          IMAGE_TAG=ghcr.io/${{ github.repository_owner }}/my-image-name:${{ github.sha }}
+          IMAGE_TAG=ghcr.io/${{ github.repository_owner }}/personal-page-stats:${{ github.sha }}
           docker build . --file Dockerfile --tag $IMAGE_TAG
 
       - name: Push the Docker image
         run: |
-          IMAGE_TAG=ghcr.io/${{ github.repository_owner }}/my-image-name:${{ github.sha }}
+          IMAGE_TAG=ghcr.io/${{ github.repository_owner }}/personal-page-stats:${{ github.sha }}
           docker push $IMAGE_TAG
 
       - name: Tag latest
         run: |
-          IMAGE_TAG=ghcr.io/${{ github.repository_owner }}/my-image-name:${{ github.sha }}
-          docker tag $IMAGE_TAG ghcr.io/${{ github.repository_owner }}/my-image-name:latest
-          docker push ghcr.io/${{ github.repository_owner }}/my-image-name:latest
+          IMAGE_TAG=ghcr.io/${{ github.repository_owner }}/personal-page-stats:${{ github.sha }}
+          docker tag $IMAGE_TAG ghcr.io/${{ github.repository_owner }}/personal-page-stats:latest
+          docker push ghcr.io/${{ github.repository_owner }}/personal-page-stats:latest
 
